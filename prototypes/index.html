@@ -14,7 +14,7 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/simple.css" id="theme">
 
 		<!-- For syntax highlighting -->
@@ -70,37 +70,182 @@
 				</section>
 
 				<section>
-					<h2>Class based example</h2>
+					<h2>Class based example (Ruby)</h2>
 					<pre><code class="ruby">
-class Foo; end
+class Foo
+  def self.class_method
+    'Foo.class_method'
+  end
+
+  def instance_method
+    'Foo#instance_method'
+  end
+end
+
 class Bar < Foo; end
 
+Bar.class_method  # => "Foo.class_method"
 b = Bar.new
 b.class           # => Bar
 b.class.ancestors # => [Bar, Foo, Object, Kernel, BasicObject]
+b.instance_method # => "Foo#instance_method"
+
 					</code></pre>
 				</section>
 
 				<section>
-					<h2>Pretty Code</h2>
-					<pre><code contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
+					<h2>Class based example (Ruby)</h2>
+          <img src="./img/class-inheritance-ruby.png"></img>
+				</section>
 
-    var nodes = document.querySelectorAll( selector );
+				<section>
+					<h2>Prototype based inheritance</h2>
+          <ul>
+            <li>no separation of behavior and state</li>
+            <li>no need for classes</li>
+            <li>objects store both behavior and state</li>
+            <li>objects are created directly from other objects</li>
+            <li>original object is the <i>prototype</i> of the newly created object</li>
+          </ul>
+				</section>
 
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
+				<section>
+          <section>
+					<h2>Prototype based example (JS)</h2>
+					<pre><code class="javascript">
+var o1, o2, o3;
 
-      if( !node.className ) ) {
-        node.className += ' roll';
-      }
-    };
-  }
-}
+o1 = { foo: "o1.foo" };
+o2 = Object.create(o1);
+o3 = Object.create(o2);
+
+o1.foo; // => "o1.foo"
+o2.foo; // => "o1.foo"
+o3.foo; // => "o1.foo"
+					</code></pre>
+          </section>
+
+          <section>
+            <h2><code>Object.create</code></h2>
+            <ul>
+              <li>creates a new object with the specified prototype object</li>
+              <li>introduced in ECMAScript 5</li>
+              <li>polyfillable</li>
+            </ul>
+          </section>
+
+				</section>
+
+				<section>
+					<h2>Prototype based example (JS)</h2>
+          <img src="./img/prototype-inheritance-ex1.png"></img>
+				</section>
+
+				<section>
+					<h2>Prototype based example (JS)</h2>
+					<pre><code class="javascript">
+var o1, o2, o3;
+
+o1 = { foo: "o1.foo" };
+o2 = Object.create(o1);
+o3 = Object.create(o2);
+
+o2.prototype; // => undefined
+o3.prototype; // => undefined
 					</code></pre>
 				</section>
 
+				<section>
+					<h2>Prototype based example (JS)</h2>
+          <img src="./img/prototype-inheritance-ex2.png"></img>
+				</section>
+
+				<section>
+          <section>
+            <h2>Prototype based example (JS)</h2>
+            <pre><code class="javascript">
+var o1, o2, o3;
+
+o1 = { foo: "o1.foo" };
+o2 = Object.create(o1);
+o3 = Object.create(o2);
+
+o1.__proto__ === Object.prototype; // => true
+o2.__proto__ === o1;               // => true
+o3.__proto__ === o2;               // => true
+            </code></pre>
+          </section>
+
+          <section>
+            <h2><code>__proto__</code></h2>
+            <ul>
+              <li>non-standard (not supported in IE)</li>
+              <li>refers to the object's internal <code>[[Prototype]] property</code></li>
+              <li>can be modified in some engines (Firefox) but not others</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3><code>Object.getPrototypeOf</code></h3>
+            <ul>
+              <li>returns the object's prototype (<code>[[Prototype]]</code>)</li>
+              <li>introduced in ECMAScript 5</li>
+              <li>the standard way of accessing <code>__proto__</code></li>
+            </ul>
+          </section>
+				</section>
+
+        <section>
+          <h2>Constructor functions</h2>
+          <ul>
+            <li>used with the <code>new</code> operator to create objects and initialize them</li>
+            <li>looks very similar to instantiating an object from a class in Java</li>
+            <li>big source of confusion for new javascript developers</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Constructor functions - how do they work?</h2>
+          <ul>
+            <li>
+              Invoking a constructor function with the <code>new</code> operator creates a new object
+              whose prototype is set to the constructor function's <code>prototype</code> property.
+            </li>
+            <li>
+              The new object set to the <code>this</code> variable within the constructor function's body.
+            </li>
+          </ul>
+        </section>
+
+				<section>
+					<h2>Constructor function example</h2>
+					<pre><code class="javascript">
+function Person(name) {
+  this.name = name;
+}
+
+Person.prototype = {
+  getName: function() { return this.name; }
+};
+
+var p = new Person("Corey");
+p.__proto__ === Person.prototype; // => true
+p.getName();                      // => "Corey"
+					</code></pre>
+				</section>
+
+				<section>
+					<h2><code>Object.create</code> polyfill</h2>
+					<pre><code class="javascript">
+if (!Object.create) {
+  Object.create = function(o) {
+    var f = function() {};
+    f.prototype = o;
+    return new f();
+  };
+}
+					</code></pre>
+				</section>
 			</div>
 
 		</div>
