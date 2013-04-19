@@ -122,6 +122,11 @@ o3.foo; // => "o1.foo"
 					</code></pre>
 				</section>
 
+				<section>
+					<h2>Prototype based example (JS)</h2>
+          <img src="./img/prototype-inheritance-ex1.png"></img>
+				</section>
+
         <section>
           <h2><code>Object.create</code></h2>
           <ul>
@@ -130,11 +135,6 @@ o3.foo; // => "o1.foo"
             <li>easy to polyfill</li>
           </ul>
         </section>
-
-				<section>
-					<h2>Prototype based example (JS)</h2>
-          <img src="./img/prototype-inheritance-ex1.png"></img>
-				</section>
 
 				<section>
 					<h2>Prototype based example (JS)</h2>
@@ -173,8 +173,8 @@ o3.__proto__ === o2;               // => true
         <section>
           <h2><code>__proto__</code></h2>
           <ul>
-            <li>non-standard (not supported in IE)</li>
             <li>refers to the object's internal <code>[[Prototype]]</code> property</li>
+            <li>non-standard (not supported in IE)</li>
             <li>can be modified in some engines (Firefox) but not others</li>
           </ul>
         </section>
@@ -190,9 +190,20 @@ o3.__proto__ === o2;               // => true
         </section>
 
         <section>
+          <h3>Prototypes are easy!</h3>
+          <ul>
+            <li>objects contain both state and behavior</li>
+            <li>only one inheritance chain</li>
+            <li>Use <code>Object.create</code> to establish prototype chains</li>
+            <li>Use <code>Object.getPrototypeOf</code> to inspect prototype chains</li>
+          </ul>
+        </section>
+
+        <section>
           <h2>Constructor functions</h2>
           <ul>
             <li>used with the <code>new</code> operator to create objects and initialize them</li>
+            <li>were the only way to create prototype chains prior to the introduction of <code>Object.create</code></li>
             <li>looks very similar to instantiating an object from a class in Java or Ruby</li>
             <li>big source of confusion for new javascript developers</li>
           </ul>
@@ -224,6 +235,7 @@ Person.prototype = {
 
 var p = new Person("Corey");
 p.__proto__ === Person.prototype; // => true
+p.name;                           // => "Corey"
 p.getName();                      // => "Corey"
 					</code></pre>
 				</section>
