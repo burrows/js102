@@ -64,7 +64,7 @@
             <li>separates behavior (classes) and state (instance)</li>
             <li>classes store methods</li>
             <li>instances store state in instance variables</li>
-            <li>instances are created from classes and have a point back to their class</li>
+            <li>instances are created from classes and have a pointer back to their class</li>
             <li>classes can inherit behavior from other classes</li>
           </ul>
 				</section>
@@ -72,23 +72,24 @@
 				<section>
 					<h2>Class based example (Ruby)</h2>
 					<pre><code class="ruby">
-class Foo
+class Parent
   def self.class_method
-    'Foo.class_method'
+    'Parent.class_method'
   end
 
   def instance_method
-    'Foo#instance_method'
+    'Parent#instance_method'
   end
 end
 
-class Bar < Foo; end
+class Child < Parent
+end
 
-Bar.class_method  # => "Foo.class_method"
-b = Bar.new
-b.class           # => Bar
-b.class.ancestors # => [Bar, Foo, Object, Kernel, BasicObject]
-b.instance_method # => "Foo#instance_method"
+Child.class_method # => "Parent.class_method"
+c = Child.new      # => #&lt;Child:0x007ff86a8754c8>
+c.instance_method  # => "Parent#instance_method"
+c.class            # => Child
+Child.ancestors    # => [Child, Parent, Object, Kernel, BasicObject]
 
 					</code></pre>
 				</section>
@@ -102,39 +103,33 @@ b.instance_method # => "Foo#instance_method"
 					<h2>Prototype based inheritance</h2>
           <ul>
             <li>no separation of behavior and state</li>
-            <li>no need for classes</li>
             <li>objects store both behavior and state</li>
-            <li>objects are created directly from other objects</li>
+            <li>objects may be created directly from other objects</li>
             <li>original object is the <i>prototype</i> of the newly created object</li>
           </ul>
 				</section>
 
 				<section>
-          <section>
 					<h2>Prototype based example (JS)</h2>
 					<pre><code class="javascript">
-var o1, o2, o3;
-
-o1 = { foo: "o1.foo" };
-o2 = Object.create(o1);
-o3 = Object.create(o2);
+var o1 = { foo: "o1.foo" },
+    o2 = Object.create(o1),
+    o3 = Object.create(o2);
 
 o1.foo; // => "o1.foo"
 o2.foo; // => "o1.foo"
 o3.foo; // => "o1.foo"
 					</code></pre>
-          </section>
-
-          <section>
-            <h2><code>Object.create</code></h2>
-            <ul>
-              <li>creates a new object with the specified prototype object</li>
-              <li>introduced in ECMAScript 5</li>
-              <li>polyfillable</li>
-            </ul>
-          </section>
-
 				</section>
+
+        <section>
+          <h2><code>Object.create</code></h2>
+          <ul>
+            <li>creates a new object with the specified prototype object</li>
+            <li>introduced in ECMAScript 5</li>
+            <li>easy to polyfill</li>
+          </ul>
+        </section>
 
 				<section>
 					<h2>Prototype based example (JS)</h2>
@@ -160,10 +155,9 @@ o3.prototype; // => undefined
           <img src="./img/prototype-inheritance-ex2.png"></img>
 				</section>
 
-				<section>
-          <section>
-            <h2>Prototype based example (JS)</h2>
-            <pre><code class="javascript">
+        <section>
+          <h2>Prototype based example (JS)</h2>
+          <pre><code class="javascript">
 var o1, o2, o3;
 
 o1 = { foo: "o1.foo" };
@@ -173,33 +167,33 @@ o3 = Object.create(o2);
 o1.__proto__ === Object.prototype; // => true
 o2.__proto__ === o1;               // => true
 o3.__proto__ === o2;               // => true
-            </code></pre>
-          </section>
+          </code></pre>
+        </section>
 
-          <section>
-            <h2><code>__proto__</code></h2>
-            <ul>
-              <li>non-standard (not supported in IE)</li>
-              <li>refers to the object's internal <code>[[Prototype]] property</code></li>
-              <li>can be modified in some engines (Firefox) but not others</li>
-            </ul>
-          </section>
+        <section>
+          <h2><code>__proto__</code></h2>
+          <ul>
+            <li>non-standard (not supported in IE)</li>
+            <li>refers to the object's internal <code>[[Prototype]]</code> property</li>
+            <li>can be modified in some engines (Firefox) but not others</li>
+          </ul>
+        </section>
 
-          <section>
-            <h3><code>Object.getPrototypeOf</code></h3>
-            <ul>
-              <li>returns the object's prototype (<code>[[Prototype]]</code>)</li>
-              <li>introduced in ECMAScript 5</li>
-              <li>the standard way of accessing <code>__proto__</code></li>
-            </ul>
-          </section>
-				</section>
+        <section>
+          <h3><code>Object.getPrototypeOf</code></h3>
+          <ul>
+            <li>returns the object's prototype (<code>[[Prototype]]</code>)</li>
+            <li>introduced in ECMAScript 5</li>
+            <li>the standard way of accessing <code>__proto__</code></li>
+            <li>not as easy to polyfill</li>
+          </ul>
+        </section>
 
         <section>
           <h2>Constructor functions</h2>
           <ul>
             <li>used with the <code>new</code> operator to create objects and initialize them</li>
-            <li>looks very similar to instantiating an object from a class in Java</li>
+            <li>looks very similar to instantiating an object from a class in Java or Ruby</li>
             <li>big source of confusion for new javascript developers</li>
           </ul>
         </section>
@@ -209,10 +203,10 @@ o3.__proto__ === o2;               // => true
           <ul>
             <li>
               Invoking a constructor function with the <code>new</code> operator creates a new object
-              whose prototype is set to the constructor function's <code>prototype</code> property.
+              whose <code>[[Prototype]]</code> is set to the constructor function's <code>prototype</code> property.
             </li>
             <li>
-              The new object set to the <code>this</code> variable within the constructor function's body.
+              The new object is bound to the <code>this</code> variable within the constructor function's body.
             </li>
           </ul>
         </section>
@@ -235,17 +229,134 @@ p.getName();                      // => "Corey"
 				</section>
 
 				<section>
+					<h2>Constructor function example</h2>
+          <img src="./img/constructor-function-ex1.png"></img>
+				</section>
+
+				<section>
+					<h3>Inheritance with Constructor functions</h3>
+					<pre><code class="javascript">
+function Parent() {}
+Parent.static = function() { return 'Parent.static'; };
+Parent.prototype = {
+  foo: function() { return 'Parent#foo'; },
+  bar: function() { return 'Parent#bar'; }
+};
+
+function Child() {}
+Child.prototype = Object.create(Parent.prototype);
+Child.prototype.bar = function() { return 'Child#bar'; };
+
+var p = new Parent(), c = new Child();
+
+Parent.static(); // => "Parent.static"
+p.foo();         // => "Parent#foo"
+p.bar();         // => "Parent#bar"
+c.foo();         // => "Parent#foo"
+c.bar();         // => "Child#bar"
+
+Child.static();  // => TypeError: Object function Child() {} has no method 'static'
+					</code></pre>
+				</section>
+
+				<section>
+					<h3>Inheritance with Constructor functions</h3>
+          <img src="./img/constructor-function-ex2.png"></img>
+				</section>
+
+				<section>
+					<h2>Constructor functions are an anti-pattern</h2>
+          <ul>
+            <li>They are <strong>NOT</strong> classes and do not behave like them</li>
+            <li>Everything that can be accomplished with class based inheritance can also be accomplished with prototype based inheritance.</li>
+            <li>Just use <code>Object.create</code></li>
+          </ul>
+        </section>
+
+				<section>
 					<h2><code>Object.create</code> polyfill</h2>
 					<pre><code class="javascript">
 if (!Object.create) {
   Object.create = function(o) {
-    var f = function() {};
-    f.prototype = o;
-    return new f();
+    var F = function() {};
+    F.prototype = o;
+    return new F();
   };
 }
 					</code></pre>
 				</section>
+
+				<section>
+					<h2>Zoom Object system</h2>
+          <ul>
+            <li>Zoom has no classes!</li>
+            <li>Instead it uses <em>prototype</em> objects to define common behavior</li>
+            <li>Prototype objects are used in a similar manner to how class objects are used in other languages</li>
+            <li>Since there are no classes, we avoid the problem of making class-level inheritance work</li>
+          </ul>
+        </section>
+
+				<section>
+					<h2>Basic Zoom Example</h2>
+					<pre><code class="javascript">
+Demo.MyType = Z.Object.extend(function() {
+  this.def('foo', function() {
+    return 'Demo.MyType.foo';
+  });
+});
+
+Demo.MyType.ancestors();      // => [Demo.MyType, Z.Object]
+Demo.MyType.foo();            // => "Demo.MyType.foo"
+
+var x = Demo.MyType.create(); // => #&lt;Demo.MyType:38>
+x.foo();                      // => "Demo.MyType.foo"
+x.ancestors();                // => [#&lt;Demo.MyType:38>, Demo.MyType, Z.Object]
+					</code></pre>
+        </section>
+
+				<section>
+					<h2>Basic Zoom example</h2>
+          <img src="./img/zoom-basic-example.png"></img>
+        </section>
+
+				<section>
+					<h2>Zoom Array example</h2>
+					<pre><code class="javascript">
+var a = Z.A(1,2,3); // => #&lt;Z.Array:37 [1, 2, 3]>
+
+a.size();           // => 3
+a.reverse();        // => #&lt;Z.Array:38 [3, 2, 1]>
+a.ancestors();      // => [#&lt;Z.Array:37 [1, 2, 3]>,
+                    //     Z.Array, Z.Observable, Z.Orderable,
+                    //     Z.Enumerable, Z.Object]
+					</code></pre>
+        </section>
+
+				<section>
+					<h2>Zoom Array example</h2>
+          <img src="./img/zoom-array-example.png"></img>
+        </section>
+
+				<section>
+					<h2>Zoom <code>supr</code> example</h2>
+					<pre><code class="javascript">
+Demo.Parent = Z.Object.extend(function() {
+  this.def('foo', function() {
+    return 'Demo.Parent.foo';
+  });
+});
+
+Demo.Child = Demo.Parent.extend(function() {
+  this.def('foo', function() {
+    return this.supr() + ', Demo.Child.foo';
+  });
+});
+
+var p = Demo.Parent.create(),
+    c = Demo.Child.create();
+
+p.foo(); // => "Demo.Parent.foo"
+c.foo(); // => "Demo.Parent.foo, Demo.Child.foo"
 			</div>
 
 		</div>
